@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native';
+import { Alert, FlatList, View } from 'react-native';
 import { useState } from 'react';
 import { Layout } from '../components/Layout';
 import { TaskCard } from '../components/TaskCard';
@@ -17,6 +17,14 @@ export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   function handleAddNewTask(task: Task) {
+    if (tasks.filter((t) => t.title.includes(task.title)).length > 0) {
+      Alert.alert(
+        'Tarefa Existente',
+        'Já existe uma tarefa na lista com esse nome'
+      );
+      return;
+    }
+
     setTasks((prev) => [task, ...prev]);
     setInputValue('');
   }
@@ -36,7 +44,17 @@ export function Home() {
   }
 
   function handleRemoveTask(task: Task) {
-    setTasks((prev) => prev.filter((p) => p.title !== task.title));
+    Alert.alert('Remover', `Remover tarefa ${task.title}?`, [
+      {
+        text: 'Sim',
+        onPress: () =>
+          setTasks((prev) => prev.filter((p) => p.title !== task.title)),
+      },
+      {
+        text: 'Não',
+        style: 'cancel',
+      },
+    ]);
   }
 
   return (
